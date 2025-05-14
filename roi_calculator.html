@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор ROI от внедрения AI в бизнес | LVMN</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <!-- Google Analytics - GTAG.js -->
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=YOUR_GA_TRACKING_ID"></script> -->
+    <!-- <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag("js", new Date());
+      // gtag("config", "YOUR_GA_TRACKING_ID");
+      // gtag("config", "YOUR_AW_CONVERSION_ID"); // If you have Google Ads conversion ID
+    </script> -->
+
+    <!-- Facebook Pixel Code -->
+    <!-- <script>
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version="2.0";
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,"script",
+        "https://connect.facebook.net/en_US/fbevents.js");
+        // fbq("init", "YOUR_PIXEL_ID");
+        // fbq("track", "PageView");
+    </script> -->
+    <!-- <noscript><img height="1" width="1" style="display:none"
+        src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=PageView&noscript=1"
+    /></noscript> -->
+    <!-- End Facebook Pixel Code -->
+
+    <style>
+        :root {
+            --primary-color: #4a6baf;
+            --secondary-color: #6c8cd5;
+            --accent-color: #ff7e5f;
+            --text-color: #333;
+            --light-gray: #f5f7fa;
+            --border-color: #ddd;
+            --success-color: #28a745;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: "Roboto", Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: #fff;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin: 25px 0 15px;
+            color: var(--primary-color);
+        }
+        
+        h3 {
+            font-size: 1.4rem;
+            margin: 20px 0 10px;
+        }
+        
+        p {
+            margin-bottom: 15px;
+        }
+        
+        .intro {
+            background-color: var(--light-gray);
+            padding: 30px;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+        
+        .calculator {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin: 30px 0;
+        }
+
+        /* Wizard Styles */
+        .wizard-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            padding: 0;
+            list-style: none;
+        }
+
+        .wizard-step {
+            flex: 1;
+            text-align: center;
+            padding: 10px 0;
+            border-bottom: 3px solid var(--light-gray);
+            color: var(--text-color);
+            font-weight: 500;
+            cursor: default; /* Make steps non-clickable by default */
+        }
+
+        .wizard-step.active {
+            border-bottom-color: var(--primary-color);
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .wizard-step.completed {
+             border-bottom-color: var(--success-color);
+             color: var(--success-color);
+             cursor: pointer; /* Allow clicking completed steps */
+        }
+
+        .form-step {
+            display: none; /* Hide all steps by default */
+        }
+
+        .form-step.active {
+            display: block; /* Show active step */
+        }
+
+        .wizard-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        input[type="number"], select, input[type="email"], input[type="checkbox"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        input[type="checkbox"] {
+            width: auto;
+            margin-right: 10px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+        }
+        
+        .range-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .range-slider {
+            flex-grow: 1;
+        }
+        
+        .range-value {
+            min-width: 60px;
+            text-align: right;
+            font-weight: bold;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            -webkit-appearance: none;
+            background: var(--light-gray);
+            border-radius: 5px;
+            outline: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 500;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none; /* For <a> tags styled as buttons */
+        }
+        
+        .btn:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .btn-block {
+            display: block;
+            width: 100%;
+            text-align: center;
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--primary-color);
+        }
+        
+        .results {
+            display: none;
+            background-color: var(--light-gray);
+            border-radius: 8px;
+            padding: 30px;
+            margin: 30px 0;
+        }
+        
+        .results.show {
+            display: block;
+        }
+        
+        .result-item {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .result-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .result-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin: 10px 0;
+        }
+        
+        .result-description {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .roi-positive {
+            color: var(--success-color);
+        }
+        .roi-negative {
+            color: #dc3545; /* Bootstrap danger color */
+        }
+        .roi-neutral {
+            color: var(--text-color);
+        }
+        .roi-message {
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        
+        .chart-container {
+            margin: 30px 0;
+            height: 300px;
+        }
+        
+        .assumptions {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .assumptions h3 {
+            font-size: 1.1rem;
+            color: var(--text-color);
+        }
+        
+        .assumptions ul {
+            margin-left: 20px;
+        }
+        
+        .assumptions li {
+            margin-bottom: 8px;
+        }
+        
+        .lead-capture {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin: 30px 0;
+            text-align: center;
+        }
+        
+        .lead-capture h2 {
+            color: white;
+            margin-top: 0;
+        }
+        
+        .lead-form {
+            max-width: 500px;
+            margin: 20px auto;
+        }
+        
+        .lead-form input[type="email"] {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        
+        .lead-form .btn {
+            background-color: var(--accent-color);
+        }
+        
+        .lead-form .btn:hover {
+            background-color: #ff6a4a;
+        }
+
+        .actions-container {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .cal-widget-container {
+            margin: 40px 0;
+            padding: 20px;
+            background-color: var(--light-gray);
+            border-radius: 8px;
+        }
+        
+        footer {
+            background-color: var(--light-gray);
+            padding: 30px 0;
+            text-align: center;
+            margin-top: 50px;
+        }
+        
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .footer-text {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .calculator, .intro, .results, .lead-capture, .cal-widget-container {
+                padding: 20px;
+            }
+            .actions-container {
+                flex-direction: column;
+            }
+            .wizard-steps {
+                font-size: 0.8rem; /* Smaller font for step names on mobile */
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Калькулятор ROI от внедрения AI в бизнес</h1>
+            <p>Рассчитайте потенциальную экономию времени и денег от внедрения искусственного интеллекта в ваш бизнес</p>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="intro">
+            <h2>Оцените потенциальную выгоду от AI</h2>
+            <p>Внедрение искусственного интеллекта может значительно повысить эффективность бизнес-процессов, сократить расходы и увеличить доходы. Этот калькулятор поможет вам оценить потенциальный возврат инвестиций (ROI) от внедрения AI-решений в вашей компании.</p>
+            <p>Просто заполните форму ниже, указав информацию о вашем бизнесе, и получите детальный расчет экономической эффективности внедрения AI.</p>
+        </div>
+        
+        <div class="calculator">
+            <ul class="wizard-steps">
+                <li class="wizard-step active" data-step="1">Шаг 1: О компании</li>
+                <li class="wizard-step" data-step="2">Шаг 2: Автоматизация</li>
+                <li class="wizard-step" data-step="3">Шаг 3: Инвестиции</li>
+                <li class="wizard-step" data-step="4">Шаг 4: Результат</li>
+            </ul>
+
+            <form id="roi-calculator-form">
+                <!-- Step 1: Company Data -->
+                <div class="form-step active" data-step="1">
+                    <h2>Шаг 1: Данные о вашей компании</h2>
+                    <div class="form-group">
+                        <label for="business-type">Тип бизнеса:</label>
+                        <select id="business-type">
+                            <option value="other">Другое (общие настройки)</option>
+                            <option value="retail">Розничная торговля</option>
+                            <option value="service">Сфера услуг</option>
+                            <option value="manufacturing">Производство</option>
+                            <option value="tech">IT/Технологии</option>
+                            <option value="finance">Финансы/Банкинг</option>
+                            <option value="healthcare">Здравоохранение</option>
+                            <option value="education">Образование</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="company-size">Размер компании (количество сотрудников):</label>
+                        <input type="number" id="company-size" min="1" value="10" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="annual-revenue">Годовой оборот компании (₽):</label>
+                        <input type="number" id="annual-revenue" min="0" value="10000000" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="avg-salary">Средняя месячная зарплата сотрудника (₽):</label>
+                        <input type="number" id="avg-salary" min="0" value="80000" required>
+                    </div>
+                </div>
+
+                <!-- Step 2: Automation Potential -->
+                <div class="form-step" data-step="2">
+                    <h2>Шаг 2: Оцените потенциал автоматизации</h2>
+                    <p>Выберите тип бизнеса на Шаге 1, чтобы увидеть рекомендуемые настройки, или настройте вручную.</p>
+                    
+                    <div class="form-group">
+                        <label for="marketing-automation">Маркетинг и продажи (% задач, которые можно автоматизировать):</label>
+                        <div class="range-container">
+                            <input type="range" id="marketing-automation" min="0" max="100" value="40" class="range-slider">
+                            <span class="range-value" id="marketing-automation-value">40%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="customer-service-automation">Клиентская поддержка (% задач, которые можно автоматизировать):</label>
+                        <div class="range-container">
+                            <input type="range" id="customer-service-automation" min="0" max="100" value="60" class="range-slider">
+                            <span class="range-value" id="customer-service-automation-value">60%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="operations-automation">Операционная деятельность (% задач, которые можно автоматизировать):</label>
+                        <div class="range-container">
+                            <input type="range" id="operations-automation" min="0" max="100" value="30" class="range-slider">
+                            <span class="range-value" id="operations-automation-value">30%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="hr-automation">Управление персоналом (% задач, которые можно автоматизировать):</label>
+                        <div class="range-container">
+                            <input type="range" id="hr-automation" min="0" max="100" value="25" class="range-slider">
+                            <span class="range-value" id="hr-automation-value">25%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="finance-automation">Финансы и аналитика (% задач, которые можно автоматизировать):</label>
+                        <div class="range-container">
+                            <input type="range" id="finance-automation" min="0" max="100" value="35" class="range-slider">
+                            <span class="range-value" id="finance-automation-value">35%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Investments -->
+                <div class="form-step" data-step="3">
+                    <h2>Шаг 3: Инвестиции в AI</h2>
+                    <div class="form-group">
+                        <label for="ai-investment">Планируемые первоначальные инвестиции в AI-решения (₽):</label>
+                        <input type="number" id="ai-investment" min="0" value="1000000" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-label" for="recurring-costs-checkbox">
+                            <input type="checkbox" id="recurring-costs-checkbox">
+                            Учитывать ежегодные затраты на подписку/обслуживание AI (5% от первоначальных инвестиций)
+                        </label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="implementation-time">Время на внедрение (месяцев):</label>
+                        <input type="number" id="implementation-time" min="1" max="36" value="3" required>
+                    </div>
+                </div>
+
+                <!-- Step 4: Placeholder for Results (handled by JS) -->
+                <div class="form-step" data-step="4">
+                    <h2>Шаг 4: Результаты расчета ROI</h2>
+                    <p>Нажмите "Рассчитать ROI", чтобы увидеть результаты.</p>
+                    <!-- Results will be injected here by JavaScript -->
+                </div>
+
+                <div class="wizard-buttons">
+                    <button type="button" id="prev-btn" class="btn btn-secondary" style="display: none;">Назад</button>
+                    <button type="button" id="next-btn" class="btn">Далее</button>
+                    <button type="button" id="calculate-btn" class="btn btn-block" style="display: none;">Рассчитать ROI</button>
+                </div>
+            </form>
+        </div>
+        
+        <div id="results" class="results">
+            <!-- Content will be dynamically generated by JS -->
+             <h2>Результаты расчета ROI</h2>
+            <div id="results-content">
+                <div class="result-item">
+                    <h3>Общая экономия времени сотрудников</h3>
+                    <div class="result-value" id="time-saved">0 часов/год</div>
+                    <p class="result-description">Оценка времени, которое будет сэкономлено благодаря автоматизации рутинных задач с помощью AI.</p>
+                </div>
+                <div class="result-item">
+                    <h3>Экономия затрат на персонал</h3>
+                    <div class="result-value" id="cost-savings">0 ₽/год</div>
+                    <p class="result-description">Потенциальная экономия на затратах на персонал за счет повышения эффективности работы.</p>
+                </div>
+                <div class="result-item">
+                    <h3>Потенциальный рост выручки</h3>
+                    <div class="result-value" id="revenue-increase">0 ₽/год</div>
+                    <p class="result-description">Прогнозируемое увеличение выручки за счет улучшения клиентского опыта и оптимизации процессов.</p>
+                </div>
+                <div class="result-item">
+                    <h3>Скорректированные годовые затраты на AI</h3>
+                    <div class="result-value" id="adjusted-ai-costs">0 ₽/год</div>
+                    <p class="result-description">Общие затраты на AI в первый год, включая первоначальные инвестиции и ежегодное обслуживание (если выбрано).</p>
+                </div>
+                <div class="result-item">
+                    <h3>Возврат инвестиций (ROI) за первый год</h3>
+                    <div class="result-value" id="roi-value">0%</div>
+                    <p class="result-description" id="roi-message-text">Процентное соотношение чистой прибыли к общим затратам на AI за первый год.</p>
+                </div>
+                <div class="result-item">
+                    <h3>Срок окупаемости</h3>
+                    <div class="result-value" id="payback-period">0 месяцев</div>
+                    <p class="result-description">Время, необходимое для того, чтобы инвестиции в AI полностью окупились, учитывая ежегодные выгоды.</p>
+                </div>
+            </div>
+            <div class="actions-container">
+                <button type="button" id="download-pdf-btn" class="btn btn-secondary">Скачать PDF-отчет</button>
+            </div>
+            <div class="chart-container">
+                <canvas id="roi-chart"></canvas>
+            </div>
+            <div class="assumptions">
+                <h3>Допущения и методология расчета</h3>
+                <ul>
+                    <li>Расчет основан на средних показателях эффективности внедрения AI в различных отраслях.</li>
+                    <li>Экономия времени сотрудников рассчитывается исходя из стандартной 40-часовой рабочей недели и 48 рабочих недель в году.</li>
+                    <li>Потенциальный рост выручки оценивается на основе среднеотраслевых показателей улучшения клиентского опыта и оптимизации процессов.</li>
+                    <li>Расчет ROI учитывает как прямую экономию затрат, так и потенциальный рост выручки, а также затраты на AI.</li>
+                    <li>Срок окупаемости рассчитывается с учетом времени на внедрение AI-решений и чистых годовых выгод.</li>
+                    <li>Ежегодные затраты на подписку/обслуживание AI (если выбраны) составляют 5% от первоначальных инвестиций и учитываются в расчете ROI за первый год и сроке окупаемости.</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="lead-capture">
+            <h2>Получите детальный отчет и консультацию</h2>
+            <p>Оставьте свой email, и мы отправим вам PDF-отчет с расчетами, а также свяжемся для обсуждения потенциала AI для вашего бизнеса.</p>
+            
+            <form class="lead-form" id="lead-form">
+                <input type="email" id="email" name="email" placeholder="Ваш email" required>
+                <button type="submit" class="btn btn-block">Отправить отчет и запросить консультацию</button>
+            </form>
+        </div>
+
+        <div class="cal-widget-container">
+            <h2>Записаться на бесплатную 30-минутную консультацию</h2>
+            <p>Обсудите ваши задачи с нашим экспертом и узнайте, как AI может помочь вашему бизнесу расти.</p>
+            <!-- Cal inline embed code begins -->
+            <div style="width:100%;height:100%;overflow:scroll" id="my-cal-inline"></div>
+            <script type="text/javascript">
+              (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if(typeof namespace === "string"){cal.ns[namespace] = cal.ns[namespace] || api;p(cal.ns[namespace], ar);p(cal, ["initNamespace", namespace]);} else p(cal, ar); return;} p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
+            Cal("init", "30min", {origin:"https://cal.com"});
+
+              Cal.ns["30min"]("inline", {
+                elementOrSelector:"#my-cal-inline",
+                config: {"layout":"month_view"},
+                calLink: "vladislav-lyamin/30min",
+              });
+
+              Cal.ns["30min"]("ui", {"hideEventTypeDetails":false,"layout":"month_view"});
+              </script>
+              <!-- Cal inline embed code ends -->
+        </div>
+
+    </div>
+    
+    <footer>
+        <div class="container">
+            <div class="footer-logo">LVMN AI Solutions</div>
+            <div class="footer-text">© 2025 LVMN. Все права защищены.</div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const formSteps = document.querySelectorAll(".form-step");
+            const wizardSteps = document.querySelectorAll(".wizard-step");
+            const prevBtn = document.getElementById("prev-btn");
+            const nextBtn = document.getElementById("next-btn");
+            const calculateBtn = document.getElementById("calculate-btn");
+            const resultsDiv = document.getElementById("results");
+            let currentStep = 1;
+            const totalSteps = formSteps.length;
+
+            function updateWizardSteps() {
+                wizardSteps.forEach((step, index) => {
+                    step.classList.remove("active", "completed");
+                    if (index + 1 < currentStep) {
+                        step.classList.add("completed");
+                    } else if (index + 1 === currentStep) {
+                        step.classList.add("active");
+                    }
+                });
+            }
+
+            function showStep(stepNumber) {
+                formSteps.forEach(step => step.classList.remove("active"));
+                document.querySelector(`.form-step[data-step="${stepNumber}"]`).classList.add("active");
+                currentStep = stepNumber;
+                updateWizardSteps();
+
+                prevBtn.style.display = currentStep === 1 ? "none" : "inline-block";
+                nextBtn.style.display = currentStep === totalSteps ? "none" : "inline-block";
+                calculateBtn.style.display = currentStep === totalSteps ? "inline-block" : "none";
+                if (currentStep === totalSteps) { // If on the last step (results placeholder)
+                    nextBtn.style.display = "none";
+                    calculateBtn.style.display = "inline-block";
+                } else {
+                    calculateBtn.style.display = "none";
+                }
+            }
+            
+            wizardSteps.forEach(step => {
+                step.addEventListener("click", () => {
+                    const stepNumber = parseInt(step.dataset.step);
+                    // Allow navigation to completed steps or the current step
+                    if (step.classList.contains("completed") || step.classList.contains("active")) {
+                         if (stepNumber < totalSteps) { // Don't jump to results step directly
+                            showStep(stepNumber);
+                         }
+                    }
+                });
+            });
+
+            function validateStep(stepNumber) {
+                const currentFormStep = document.querySelector(`.form-step[data-step="${stepNumber}"]`);
+                const inputs = currentFormStep.querySelectorAll("input[required], select[required]");
+                for (let input of inputs) {
+                    if (!input.value || (input.type === "number" && isNaN(parseFloat(input.value)))) {
+                        alert(`Пожалуйста, заполните поле "${input.previousElementSibling ? input.previousElementSibling.textContent : input.id}"`);
+                        input.focus();
+                        return false;
+                    }
+                    if (input.type === "number" && input.min && parseFloat(input.value) < parseFloat(input.min)) {
+                        alert(`Значение поля "${input.previousElementSibling ? input.previousElementSibling.textContent : input.id}" не может быть меньше ${input.min}`);
+                        input.focus();
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            nextBtn.addEventListener("click", () => {
+                if (validateStep(currentStep) && currentStep < totalSteps) {
+                    showStep(currentStep + 1);
+                }
+            });
+
+            prevBtn.addEventListener("click", () => {
+                if (currentStep > 1) {
+                    showStep(currentStep - 1);
+                }
+            });
+
+            showStep(currentStep); // Initialize first step
+
+            const rangeSliders = document.querySelectorAll(".range-slider");
+            rangeSliders.forEach(slider => {
+                const valueDisplay = document.getElementById(slider.id + "-value");
+                slider.addEventListener("input", () => {
+                    valueDisplay.textContent = slider.value + "%";
+                });
+            });
+
+            const businessTypeSelect = document.getElementById("business-type");
+            const automationSliders = {
+                marketing: document.getElementById("marketing-automation"),
+                customerService: document.getElementById("customer-service-automation"),
+                operations: document.getElementById("operations-automation"),
+                hr: document.getElementById("hr-automation"),
+                finance: document.getElementById("finance-automation")
+            };
+
+            const industryPresets = {
+                "retail": { marketing: 50, customerService: 70, operations: 60, hr: 20, finance: 30 },
+                "service": { marketing: 60, customerService: 50, operations: 40, hr: 30, finance: 35 },
+                "manufacturing": { marketing: 30, customerService: 40, operations: 70, hr: 25, finance: 40 },
+                "tech": { marketing: 50, customerService: 60, operations: 65, hr: 20, finance: 30 },
+                "finance": { marketing: 40, customerService: 70, operations: 50, hr: 30, finance: 60 },
+                "healthcare": { marketing: 30, customerService: 50, operations: 40, hr: 35, finance: 30 },
+                "education": { marketing: 40, customerService: 40, operations: 30, hr: 25, finance: 20 },
+                "other": { marketing: 40, customerService: 60, operations: 30, hr: 25, finance: 35 } 
+            };
+
+            function updateSliderValues(preset) {
+                automationSliders.marketing.value = preset.marketing;
+                document.getElementById("marketing-automation-value").textContent = preset.marketing + "%";
+                automationSliders.customerService.value = preset.customerService;
+                document.getElementById("customer-service-automation-value").textContent = preset.customerService + "%";
+                automationSliders.operations.value = preset.operations;
+                document.getElementById("operations-automation-value").textContent = preset.operations + "%";
+                automationSliders.hr.value = preset.hr;
+                document.getElementById("hr-automation-value").textContent = preset.hr + "%";
+                automationSliders.finance.value = preset.finance;
+                document.getElementById("finance-automation-value").textContent = preset.finance + "%";
+            }
+
+            businessTypeSelect.addEventListener("change", (event) => {
+                const selectedIndustry = event.target.value;
+                const preset = industryPresets[selectedIndustry] || industryPresets["other"];
+                updateSliderValues(preset);
+            });
+            updateSliderValues(industryPresets[businessTypeSelect.value] || industryPresets["other"]);
+
+            let roiChart = null;
+
+            calculateBtn.addEventListener("click", () => {
+                // Validate final step before calculation if needed, though most inputs are on previous steps
+                if (!validateStep(1) || !validateStep(2) || !validateStep(3)) {
+                    alert("Пожалуйста, вернитесь и заполните все обязательные поля на предыдущих шагах.");
+                    return;
+                }
+
+                const businessType = document.getElementById("business-type").value;
+                const companySize = parseFloat(document.getElementById("company-size").value) || 0;
+                const annualRevenue = parseFloat(document.getElementById("annual-revenue").value) || 0;
+                const avgSalary = parseFloat(document.getElementById("avg-salary").value) || 0;
+                
+                const marketingAutomation = parseFloat(document.getElementById("marketing-automation").value) / 100 || 0;
+                const customerServiceAutomation = parseFloat(document.getElementById("customer-service-automation").value) / 100 || 0;
+                const operationsAutomation = parseFloat(document.getElementById("operations-automation").value) / 100 || 0;
+                const hrAutomation = parseFloat(document.getElementById("hr-automation").value) / 100 || 0;
+                const financeAutomation = parseFloat(document.getElementById("finance-automation").value) / 100 || 0;
+                
+                const initialAiInvestment = parseFloat(document.getElementById("ai-investment").value) || 0;
+                const includeRecurringCosts = document.getElementById("recurring-costs-checkbox").checked;
+                const implementationTime = parseFloat(document.getElementById("implementation-time").value) || 1;
+
+                let annualRecurringAiCosts = 0;
+                if (includeRecurringCosts) {
+                    annualRecurringAiCosts = initialAiInvestment * 0.05;
+                }
+                const totalFirstYearAiCosts = initialAiInvestment + annualRecurringAiCosts;
+
+                const avgTasksPerEmployee = 5; 
+                const workingHoursPerYear = 40 * 48; 
+                const revenueGrowthFactor = 0.05; 
+
+                let totalAutomationPotential = (
+                    marketingAutomation +
+                    customerServiceAutomation +
+                    operationsAutomation +
+                    hrAutomation +
+                    financeAutomation
+                ) / avgTasksPerEmployee; 
+                totalAutomationPotential = Math.min(totalAutomationPotential, 1); 
+
+                const timeSavedPerEmployeeYear = workingHoursPerYear * totalAutomationPotential;
+                const totalTimeSavedYear = timeSavedPerEmployeeYear * companySize;
+                
+                const costPerHour = avgSalary / (4 * 40); 
+                const totalCostSavingsYear = totalTimeSavedYear * costPerHour;
+                
+                const potentialRevenueIncrease = annualRevenue * revenueGrowthFactor * totalAutomationPotential; 
+                
+                const totalAnnualBenefit = totalCostSavingsYear + potentialRevenueIncrease;
+                
+                const roi = totalFirstYearAiCosts > 0 ? ((totalAnnualBenefit - totalFirstYearAiCosts) / totalFirstYearAiCosts) * 100 : (totalAnnualBenefit > 0 ? Infinity : 0);
+                
+                const netAnnualBenefitAfterRecurring = totalAnnualBenefit - annualRecurringAiCosts;
+                const paybackPeriod = netAnnualBenefitAfterRecurring > 0 ? (initialAiInvestment / (netAnnualBenefitAfterRecurring / 12)) + implementationTime : Infinity;
+
+                document.getElementById("time-saved").textContent = Math.round(totalTimeSavedYear).toLocaleString() + " часов/год";
+                document.getElementById("cost-savings").textContent = Math.round(totalCostSavingsYear).toLocaleString() + " ₽/год";
+                document.getElementById("revenue-increase").textContent = Math.round(potentialRevenueIncrease).toLocaleString() + " ₽/год";
+                document.getElementById("adjusted-ai-costs").textContent = Math.round(totalFirstYearAiCosts).toLocaleString() + " ₽/год";
+                
+                const roiValueElement = document.getElementById("roi-value");
+                const roiMessageTextElement = document.getElementById("roi-message-text"); // Assuming you have an element for the message
+                roiValueElement.textContent = roi === Infinity ? "Бесконечный (нет затрат, есть выгода)" : Math.round(roi) + "%";
+                
+                // Dynamic ROI feedback
+                roiValueElement.classList.remove("roi-positive", "roi-negative", "roi-neutral");
+                if (roi > 100) {
+                    roiValueElement.classList.add("roi-positive");
+                    roiMessageTextElement.textContent = "Отличный результат! AI может более чем удвоить ваши инвестиции уже в первый год.";
+                } else if (roi >= 30 && roi <=100) {
+                    roiValueElement.classList.add("roi-positive");
+                    roiMessageTextElement.textContent = "Хороший ROI! Внедрение AI выглядит перспективным.";
+                } else if (roi > 0 && roi < 30) {
+                    roiValueElement.classList.add("roi-neutral");
+                    roiMessageTextElement.textContent = "ROI положительный, но невысокий. Попробуйте изменить инвестиции или уровень автоматизации для лучших результатов.";
+                } else {
+                    roiValueElement.classList.add("roi-negative");
+                    roiMessageTextElement.textContent = "ROI отрицательный или нулевой. Рассмотрите возможность изменения параметров инвестиций или уровня автоматизации.";
+                }
+                if (roi === Infinity) {
+                     roiMessageTextElement.textContent = "ROI бесконечен, так как нет затрат при наличии выгоды. Уточните объем инвестиций.";
+                }
+
+                document.getElementById("payback-period").textContent = paybackPeriod === Infinity ? "Не окупается" : Math.round(paybackPeriod) + " месяцев";
+
+                // Move results display to the 4th step of the wizard
+                const resultsPlaceholder = document.querySelector(".form-step[data-step='4']");
+                resultsPlaceholder.innerHTML = ""; // Clear placeholder text
+                resultsPlaceholder.appendChild(resultsDiv);
+                resultsDiv.classList.add("show");
+                resultsDiv.scrollIntoView({ behavior: "smooth" });
+
+                const chartCtx = document.getElementById("roi-chart").getContext("2d");
+                if (roiChart) {
+                    roiChart.destroy();
+                }
+                roiChart = new Chart(chartCtx, {
+                    type: "bar",
+                    data: {
+                        labels: ["Первоначальные инвестиции", "Ежегодные затраты на AI", "Годовая экономия", "Рост выручки", "Общая годовая выгода"],
+                        datasets: [{
+                            label: "Финансовые показатели (₽)",
+                            data: [initialAiInvestment, annualRecurringAiCosts, totalCostSavingsYear, potentialRevenueIncrease, totalAnnualBenefit],
+                            backgroundColor: [
+                                "rgba(255, 99, 132, 0.7)", 
+                                "rgba(255, 159, 64, 0.7)", 
+                                "rgba(75, 192, 192, 0.7)", 
+                                "rgba(153, 102, 255, 0.7)",
+                                "rgba(54, 162, 235, 0.7)"  
+                            ],
+                            borderColor: [
+                                "rgba(255, 99, 132, 1)",
+                                "rgba(255, 159, 64, 1)",
+                                "rgba(75, 192, 192, 1)",
+                                "rgba(153, 102, 255, 1)",
+                                "rgba(54, 162, 235, 1)"
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return value.toLocaleString() + " ₽";
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+
+            const downloadPdfBtn = document.getElementById("download-pdf-btn");
+            downloadPdfBtn.addEventListener("click", async () => {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF("p", "pt", "a4");
+                
+                const resultsContentElement = document.getElementById("results-content");
+                const leadCaptureElement = document.querySelector(".lead-capture");
+                const calWidgetContainer = document.querySelector(".cal-widget-container");
+                const assumptionsElement = document.querySelector(".assumptions");
+                const chartContainer = document.querySelector(".chart-container");
+                const actionsContainer = document.querySelector(".actions-container");
+                
+                // Temporarily hide elements not needed in PDF
+                const originalDisplays = {};
+                const elementsToHideTemporarily = [leadCaptureElement, calWidgetContainer, actionsContainer];
+                elementsToHideTemporarily.forEach(el => {
+                    if(el) {
+                        originalDisplays[el.id || el.className] = el.style.display;
+                        el.style.display = "none"; 
+                    }
+                });
+
+                let yPos = 20;
+                const pageHeight = doc.internal.pageSize.getHeight();
+                const pageWidth = doc.internal.pageSize.getWidth();
+                const margin = 40; // Increased margin for better layout
+
+                doc.setFontSize(18);
+                doc.text("Отчет по ROI от внедрения AI", pageWidth / 2, yPos + 10, { align: "center" });
+                yPos += 40;
+
+                doc.setFontSize(12);
+                doc.text("Введенные данные:", margin, yPos);
+                yPos += 20;
+                doc.setFontSize(10);
+                const inputData = [
+                    `- Тип бизнеса: ${document.getElementById("business-type").selectedOptions[0].text}`,
+                    `- Размер компании: ${document.getElementById("company-size").value} сотрудников`,
+                    `- Годовой оборот: ${parseFloat(document.getElementById("annual-revenue").value).toLocaleString()} ₽`,
+                    `- Средняя зарплата: ${parseFloat(document.getElementById("avg-salary").value).toLocaleString()} ₽`,
+                    `- Маркетинг и продажи (автоматизация): ${document.getElementById("marketing-automation").value}%`,
+                    `- Клиентская поддержка (автоматизация): ${document.getElementById("customer-service-automation").value}%`,
+                    `- Операционная деятельность (автоматизация): ${document.getElementById("operations-automation").value}%`,
+                    `- Управление персоналом (автоматизация): ${document.getElementById("hr-automation").value}%`,
+                    `- Финансы и аналитика (автоматизация): ${document.getElementById("finance-automation").value}%`,
+                    `- Первоначальные инвестиции в AI: ${parseFloat(document.getElementById("ai-investment").value).toLocaleString()} ₽`,
+                    `- Учитывать ежегодные затраты на AI (5%): ${document.getElementById("recurring-costs-checkbox").checked ? "Да" : "Нет"}`,
+                    `- Время на внедрение: ${document.getElementById("implementation-time").value} месяцев`
+                ];
+                inputData.forEach(line => {
+                    if (yPos > pageHeight - margin) { doc.addPage(); yPos = margin; }
+                    doc.text(line, margin + 5, yPos);
+                    yPos += 12;
+                });
+                yPos += 10;
+
+                doc.setFontSize(12);
+                if (yPos > pageHeight - margin - 20) { doc.addPage(); yPos = margin; }
+                doc.text("Результаты расчета:", margin, yPos);
+                yPos += 20;
+                
+                // Capture results-content as an image
+                if (resultsContentElement) {
+                    const canvasResults = await html2canvas(resultsContentElement, { scale: 2, backgroundColor: null });
+                    const imgDataResults = canvasResults.toDataURL("image/png");
+                    const imgPropsResults = doc.getImageProperties(imgDataResults);
+                    const pdfImgWidthResults = pageWidth - 2 * margin;
+                    const pdfImgHeightResults = (imgPropsResults.height * pdfImgWidthResults) / imgPropsResults.width;
+                    if (yPos + pdfImgHeightResults > pageHeight - margin) { doc.addPage(); yPos = margin; }
+                    doc.addImage(imgDataResults, "PNG", margin, yPos, pdfImgWidthResults, pdfImgHeightResults);
+                    yPos += pdfImgHeightResults + 15;
+                }
+
+                // Add chart image
+                if (roiChart && chartContainer && chartContainer.style.display !== "none") {
+                    try {
+                        const chartImage = roiChart.toBase64Image();
+                        const chartImgProps = doc.getImageProperties(chartImage);
+                        const chartPdfWidth = pageWidth - 2 * margin;
+                        const chartPdfHeight = (chartImgProps.height * chartPdfWidth) / chartImgProps.width;
+                        if (yPos + chartPdfHeight > pageHeight - margin) { doc.addPage(); yPos = margin; }
+                        doc.addImage(chartImage, "PNG", margin, yPos, chartPdfWidth, chartPdfHeight);
+                        yPos += chartPdfHeight + 15;
+                    } catch (e) {
+                        console.error("Error adding chart to PDF:", e);
+                        if (yPos > pageHeight - margin) { doc.addPage(); yPos = margin; }
+                        doc.text("Диаграмма не может быть отображена в PDF.", margin, yPos);
+                        yPos += 12;
+                    }
+                }
+
+                // Add assumptions
+                if (assumptionsElement) {
+                    if (yPos > pageHeight - margin - 30) { doc.addPage(); yPos = margin; }
+                    doc.setFontSize(12);
+                    doc.text("Допущения и методология расчета:", margin, yPos);
+                    yPos +=15;
+                    doc.setFontSize(9);
+                    const assumptionsText = [];
+                    assumptionsElement.querySelectorAll("li").forEach(li => assumptionsText.push("- " + li.textContent));
+                    assumptionsText.forEach(text => {
+                        const splitText = doc.splitTextToSize(text, pageWidth - 2 * margin - 5);
+                        if (yPos + (splitText.length * 10) > pageHeight - margin) { doc.addPage(); yPos = margin; }
+                        doc.text(splitText, margin + 5, yPos);
+                        yPos += (splitText.length * 10) + 4; 
+                    });
+                }
+
+                // Restore display of hidden elements
+                elementsToHideTemporarily.forEach(el => {
+                     if(el) el.style.display = originalDisplays[el.id || el.className] || "block";
+                });
+
+                doc.save("ROI_AI_Report_LVMN.pdf");
+            });
+
+            const leadForm = document.getElementById("lead-form");
+            leadForm.addEventListener("submit", async (event) => {
+                event.preventDefault();
+                const email = document.getElementById("email").value;
+                
+                const formData = {
+                    email: email,
+                    businessType: document.getElementById("business-type").value,
+                    companySize: document.getElementById("company-size").value,
+                    annualRevenue: document.getElementById("annual-revenue").value,
+                    avgSalary: document.getElementById("avg-salary").value,
+                    marketingAutomation: document.getElementById("marketing-automation").value,
+                    customerServiceAutomation: document.getElementById("customer-service-automation").value,
+                    operationsAutomation: document.getElementById("operations-automation").value,
+                    hrAutomation: document.getElementById("hr-automation").value,
+                    financeAutomation: document.getElementById("finance-automation").value,
+                    aiInvestment: document.getElementById("ai-investment").value,
+                    recurringCostsChecked: document.getElementById("recurring-costs-checkbox").checked,
+                    implementationTime: document.getElementById("implementation-time").value,
+                    timeSaved: document.getElementById("time-saved").textContent,
+                    costSavings: document.getElementById("cost-savings").textContent,
+                    revenueIncrease: document.getElementById("revenue-increase").textContent,
+                    adjustedAiCosts: document.getElementById("adjusted-ai-costs").textContent,
+                    roiValue: document.getElementById("roi-value").textContent,
+                    paybackPeriod: document.getElementById("payback-period").textContent
+                };
+
+                try {
+                    const response = await fetch("/submit_roi_data", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(formData),
+                    });
+                    const result = await response.json();
+                    if (response.ok) {
+                        alert("Спасибо! Ваш отчет и данные отправлены. Мы скоро свяжемся с вами.");
+                        // gtag("event", "conversion", {"send_to": "YOUR_AW_CONVERSION_ID/YOUR_CONVERSION_LABEL"});
+                        // fbq("track", "Lead");
+                    } else {
+                        alert("Произошла ошибка при отправке данных: " + (result.message || result.error || "Неизвестная ошибка"));
+                    }
+                } catch (error) {
+                    console.error("Error submitting form:", error);
+                    alert("Произошла ошибка сети при отправке данных.");
+                }
+            });
+        });
+    </script>
+</body>
+</html>
